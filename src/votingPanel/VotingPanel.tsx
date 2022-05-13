@@ -1,15 +1,24 @@
 import * as React from 'react';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import { Container, List, ListItem, TextField, Tooltip, Typography } from '@mui/material';
+import { Container, IconButton, List, ListItem, ListItemIcon, TextField, Tooltip, Typography } from '@mui/material';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import DragHandleIcon from '@mui/icons-material/DragHandle';
 import ListItemText from '@mui/material/ListItemText';
 
 export default function VotingPanel() {
-  const [movies, setGenres] = React.useState([
-    'Gangs of New York',
-    'Escape from LA'
-  ]);
+  const movies = [
+    {
+      id: "gangs",
+      name: 'Gangs of New York'
+    },
+    {
+      id: "ela",
+      name: 'Escape from LA'
+    }
+  ];
+
+
 
   const tempDragEnd = () =>{
 
@@ -24,22 +33,23 @@ export default function VotingPanel() {
       <DragDropContext onDragEnd={tempDragEnd}>
         <Droppable droppableId='movies'>
           {(provided) => (
-            <ul className="movies" {...provided.droppableProps} ref={provided.innerRef}>
-              {movies.map((movies, index) => {
+            <List className="movies" {...provided.droppableProps} ref={provided.innerRef}>
+              {movies.map(({id, name}, index) => {
                 return (
-                  <Draggable key={movies} draggableId={movies} index={index}>
+                  <Draggable key={id} draggableId={id} index={index}>
                     {(provided) => (
-                      <li  ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
-                        <p>
-                          { movies }
-                        </p>
-                      </li>
+                      <ListItem  ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                        <ListItemText primary={ name } />
+                        <IconButton edge="end">
+                           <DragHandleIcon />
+                        </IconButton>
+                      </ListItem>
                     )}
                   </Draggable>                      
                 );
               })}
               
-            </ul>
+            </List>
           )}
         </Droppable>
       </DragDropContext>
