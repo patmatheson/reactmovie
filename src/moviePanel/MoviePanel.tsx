@@ -40,14 +40,19 @@ export default function MoviePanel() {
     }
     const imdbId = match[1];
     const imdbInfo = await imdbLookup(imdbId, nominator);
+    
     console.log(imdbInfo);
 
     // I think this is fucking up the thingy, i think it's not triggering a re-render for some reason
-    // setimdburl(''); // clear back the text field
+    setimdburl(''); // clear back the text field
+    setNominator('');
 
     const newMovieOptions = Array.from(movieOptions);
     newMovieOptions.push({info: imdbInfo, id: uuidv4()})
     setMovieOptions(newMovieOptions);
+
+
+
     console.log(movieOptions);
   }
 
@@ -60,6 +65,7 @@ export default function MoviePanel() {
         id="movieLink" 
         label="IMDB Link" 
         variant="outlined"
+        value={imdburl}
         onChange={imdbChange}
       />
       <Stack direction="row" justifyContent = "space-between" spacing={2}>
@@ -67,6 +73,7 @@ export default function MoviePanel() {
           id="nominatorLink" 
           label="Nominated By" 
           variant="outlined"
+          value={nominator}
           onChange={nominatorChange}
         />
         <Button 
