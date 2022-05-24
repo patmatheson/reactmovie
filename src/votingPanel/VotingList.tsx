@@ -27,8 +27,6 @@ export default function VotingList() {
     setMovies(items);
   }
 
-  
-
   return (
     <DragDropContext onDragEnd={DragEnd}>
       <Droppable droppableId="movies">
