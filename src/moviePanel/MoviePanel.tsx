@@ -5,21 +5,25 @@ import { Container, TextField, Tooltip, Typography, List, ListItem } from '@mui/
 import { imdbLookup, ImdbInfo } from '../imdb';
 import { v4 as uuidv4 } from 'uuid';
 import MovieDisplay from './MovieDisplay';
+import { getDatabase, ref, remove, set } from "firebase/database";
+import { app } from "../firebase";
+import { useList } from 'react-firebase-hooks/database';
 
-interface MovieOption
+
+export interface MovieOption
 {
   info: ImdbInfo;
   id: string;
 }
 
-const defaultMovieOptions : MovieOption[] = [];
-
 export default function MoviePanel() {
+  const db = getDatabase(app);
 
   const [imdburl, setimdburl] = React.useState('');
   const [nominator, setNominator] = React.useState('');
 
-  const [movieOptions, setMovieOptions] = React.useState(defaultMovieOptions);
+  const moviesRef = ref(db, 'movies');
+  const [movieSnapshots, loading, error] = useList(moviesRef);
 
   const imdbChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setimdburl(event.target.value);
@@ -28,6 +32,10 @@ export default function MoviePanel() {
   const nominatorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNominator(event.target.value);
   };
+
+  const removeMovie = (movieId: string) => {
+    remove(ref (db, `movies/${movieId}`));
+  }
 
   const addIMDBMovie = async (url: string, nominator: string) => {
     console.log(`Imdb Link is: ${url}`);
@@ -40,20 +48,14 @@ export default function MoviePanel() {
     }
     const imdbId = match[1];
     const imdbInfo = await imdbLookup(imdbId, nominator);
+    const movieId = uuidv4();
     
     console.log(imdbInfo);
 
-    // I think this is fucking up the thingy, i think it's not triggering a re-render for some reason
     setimdburl(''); // clear back the text field
     setNominator('');
-
-    const newMovieOptions = Array.from(movieOptions);
-    newMovieOptions.push({info: imdbInfo, id: uuidv4()})
-    setMovieOptions(newMovieOptions);
-
-
-
-    console.log(movieOptions);
+    
+    set(ref(db, `movies/${movieId}`), {info: imdbInfo, id:movieId});
   }
 
   return (
@@ -82,14 +84,10 @@ export default function MoviePanel() {
           Submit
         </Button>
       </Stack>
-      
-      <List>
-        {movieOptions.map(movie => (
-          <ListItem>
-            <MovieDisplay movieInfo={movie.info} />
-          </ListItem>
-       ))}
-      </List>
+        {loading && <span>Loading...</span>}
+        {!loading && movieSnapshots && (
+          <MovieDisplay movieInfo={movieSnapshots.map(v => v.val())} removeMovie={removeMovie} />
+        )}
     </Stack>
   );
 }

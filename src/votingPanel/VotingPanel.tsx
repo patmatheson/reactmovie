@@ -1,6 +1,7 @@
 import Stack from '@mui/material/Stack';
 import { Typography } from '@mui/material';
 import VotingList from './VotingList';
+import GoogleLogin from '../login';
 
 export default function VotingPanel() {
   const movies = [
@@ -20,6 +21,7 @@ export default function VotingPanel() {
         Movie Voting
       </Typography>
       <VotingList />
+      <GoogleLogin />
     </Stack>
   );
 }

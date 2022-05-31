@@ -1,11 +1,13 @@
 import * as React from 'react';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import { Container, Grid, Paper, styled, TextField, Tooltip, Typography } from '@mui/material';
+import { Container, Grid, List, ListItem, Paper, styled, TextField, Tooltip, Typography } from '@mui/material';
 import { ImdbInfo } from '../imdb';
+import { MovieOption } from './MoviePanel';
 
 export interface MovieDisplayProps{
-  movieInfo: ImdbInfo
+  movieInfo: MovieOption[];
+  removeMovie: (movieId: string) => void;
 }
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -20,21 +22,32 @@ const Item = styled(Paper)(({ theme }) => ({
 export default function MovieDisplay(props: MovieDisplayProps) {
 
   return (
-    <Item >
-      <Stack direction="row">
-      <img src={props.movieInfo.poster} width="51" height="75"/>
-      <Stack >
-        <Typography variant="h5" textAlign="left" >
-          {props.movieInfo.name}
-        </Typography>
-        <Typography  textAlign="left" >
-        <b>Starring: </b>{props.movieInfo.actors}
-        </Typography>
-        <Typography textAlign="left" >
-          <b>Nominated by: </b>{props.movieInfo.nominator}
-        </Typography>
-      </Stack>
-    </Stack>
-    </Item>
+    <List>
+      {props.movieInfo.map(movie => (
+        <ListItem>
+          <Item >
+            <Stack direction="row">
+            <img src={movie.info.poster} width="51" height="75"/>
+            <Stack >
+              <Typography variant="h5" textAlign="left" >
+                {movie.info.name}
+              </Typography>
+              <Typography  textAlign="left" >
+              <b>Starring: </b>{movie.info.actors}
+              </Typography>
+              <Typography textAlign="left" >
+                <b>Nominated by: </b>{movie.info.nominator}
+              </Typography>
+            </Stack>
+          </Stack>
+          <Button 
+            variant="contained" 
+            onClick={() => props.removeMovie(movie.id)}>
+            Remove
+          </Button>
+          </Item>
+        </ListItem>
+      ))}
+    </List>
   );
 }
