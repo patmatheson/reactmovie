@@ -10,11 +10,14 @@ import { app } from "../firebase";
 import { useList } from 'react-firebase-hooks/database';
 
 
+
 export interface MovieOption
 {
   info: ImdbInfo;
   id: string;
 }
+
+
 
 export default function MoviePanel() {
   const db = getDatabase(app);

@@ -31,6 +31,9 @@ tenantId: null
 uid: "UcIN6lIg0Rcgc9tysruI5MZkJch1"
 */
 
+export interface GoogleLoginProps{
+    setUserId: (userId: string) => void;
+}
 
 interface GoogleUser {
     uid: string;
@@ -39,10 +42,8 @@ interface GoogleUser {
     photoURL: string | null;
 }
 
-export default function GoogleLogin() {
+export default function GoogleLogin(props: GoogleLoginProps) {
     const db = getDatabase (app);
-    
-
 
     function signInToGoogle() {
         signInWithPopup(auth, provider)
@@ -62,6 +63,7 @@ export default function GoogleLogin() {
             }
             set(usersRef, googleUser);
             document.cookie = `googleUID=${googleUser.uid}; SameSite=None; Secure`;
+            props.setUserId(googleUser.uid);
 
         }).catch((error) => {
             // Handle Errors here.

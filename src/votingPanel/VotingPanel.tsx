@@ -3,7 +3,11 @@ import { Typography } from '@mui/material';
 import VotingList from './VotingList';
 import GoogleLogin from '../login';
 
-export default function VotingPanel() {
+interface VotingPanelProps{
+  googleUserID: string;
+}
+
+export default function VotingPanel(props: VotingPanelProps) {
   const movies = [
     {
       id: "gangs",
@@ -20,8 +24,7 @@ export default function VotingPanel() {
       <Typography textAlign="center" variant="h5" component="div">
         Movie Voting
       </Typography>
-      <VotingList />
-      <GoogleLogin />
+      <VotingList googleUserID={props.googleUserID}/>
     </Stack>
   );
 }

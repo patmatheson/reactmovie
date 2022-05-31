@@ -7,6 +7,10 @@ import GenrePanel from './genrePanel/GenrePanel';
 import MoviePanel from './moviePanel/MoviePanel';
 import VotingPanel from './votingPanel/VotingPanel';
 
+interface ThreePanelLayoutProps {
+  googleUserID: string;
+}
+
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
   ...theme.typography.body2,
@@ -15,13 +19,13 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-export default function ThreePaneLayout() {
+export default function ThreePaneLayout(props: ThreePanelLayoutProps) {
   return (
    
       <Grid container spacing={2} columns={12}>
         <Grid item xs={12} md={4}>
             <Item>
-                <GenrePanel />
+                <GenrePanel googleUserID={props.googleUserID} />
             </Item>
         </Grid>
         <Grid xs={12} md={4}>
@@ -31,7 +35,7 @@ export default function ThreePaneLayout() {
         </Grid>
         <Grid xs={12} md={4}>
          <Item>
-            <VotingPanel />
+            <VotingPanel googleUserID={props.googleUserID} />
           </Item>
         </Grid>
       </Grid>

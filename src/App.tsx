@@ -4,38 +4,33 @@ import { app } from './firebase';
 import GoogleLogin from './login';
 import React from 'react';
 
-interface LoginRerenderer
-{
-  
-}
 
 function App() {
 
-  const [rerender, setRerender] = React.useState('0');
+  const [userId, setUserID] = React.useState(() => {
+    const cookieSplit = document.cookie.split('; ');
+    const cookieFind = cookieSplit.find(row => row.startsWith('googleUID='));
+    if (cookieFind){
+      return cookieFind.split('=')[1];
+    }
+    else {
+      return null;
+    }
+  });
 
-  const loginRerender = () => {
-    setRerender(rerender + 1);
-  }
   
-  if (!document.cookie){
+  if (!userId){
     return (
       <div className="App">
-        <GoogleLogin />
+        <GoogleLogin setUserId={setUserID} />
       </div>
     );
   }
-  const cookieSplit = document.cookie.split('; ');
-  const cookieFind = cookieSplit.find(row => row.startsWith('googleUID='));
-  if (!cookieFind) return (
-    <div className="App">
-      <GoogleLogin />
-    </div>
-  );
-  const userId = cookieFind.split('=')[1];
+   
   
   return (
     <div className="App">
-        <ThreePaneLayout />
+        <ThreePaneLayout googleUserID={userId} />
     </div>
     
   );
