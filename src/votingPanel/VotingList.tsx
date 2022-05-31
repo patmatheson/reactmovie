@@ -3,44 +3,104 @@ import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import DragHandleIcon from '@mui/icons-material/DragHandle';
 import ListItemText from '@mui/material/ListItemText';
 import react, { useState } from 'react';
+import { getDatabase, ref, remove, set, get } from "firebase/database";
+import { app } from "../firebase";
+import { useList, useListVals, useObjectVal } from 'react-firebase-hooks/database';
 
-export default function VotingList() {
-  const defaultMovies = [
-    {
-      id: "gangs",
-      name: 'Gangs of New York'
-    },
-    {
-      id: "ela",
-      name: 'Escape from LA'
+import { MovieOption } from '../moviePanel/MoviePanel'
+
+interface VotingListProps{
+  googleUserID: string;
+}
+
+interface MovieRank {
+  movieUuid: string;
+  rank: number;
+}
+
+export default function VotingList(props: VotingListProps) {
+
+  const db = getDatabase(app);
+
+  const votingRef = ref(db, `votes/${props.googleUserID}`);
+  const movieRef = ref(db, 'movies');
+  const [votingSnapshot, votingloading, votingerror] = useObjectVal<MovieRank[]>(votingRef);
+  const [movies, moviesloading, movieserror] = useListVals<MovieOption>(movieRef);
+  
+  const renderInfo: MovieOption[] = [];
+  let localVotes: MovieRank[] = [];
+  if (votingSnapshot){
+    for (const vote of votingSnapshot){
+      localVotes.push(vote);
     }
-  ];
+  }
 
-  const [movies, setMovies] = useState(defaultMovies);
+  if (movies)
+  {
+    var newMovies : string[] = [];
+    for (const movie of movies) {
+      let found = false;
+      for (const vote of localVotes){
+        if (vote.movieUuid === movie.id)
+        {
+          found = true;
+        }
+      }
+      if (!found){
+        console.log(`detected new movie: {movie.id}`)
+        newMovies.push(movie.id);
+      }
+    }
+    
+
+    if (newMovies){
+      // add new movies to the database
+      let nextRank = 0;
+      if (localVotes.length>0){
+        nextRank = localVotes[localVotes.length-1].rank;
+      }
+      for (const newMovie of newMovies) {
+        nextRank++;
+        const newMovieRank : MovieRank = {movieUuid: newMovie, rank: nextRank };
+        localVotes.push(newMovieRank);
+      }
+      set(votingRef, localVotes);
+    }
+
+    for  (const vote of localVotes){
+      const movieMatches = movies?.filter(m => m.id == vote.movieUuid);
+      if (movieMatches.length>0)
+      {
+        renderInfo.push(movieMatches[0]);
+      }
+    }
+  }
 
   const DragEnd = (result: any) =>{
     console.log (result);
-    const items = Array.from(movies);
+    const items = Array.from(localVotes);
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
 
-    setMovies(items);
+    set(votingRef, items);
   }
+
+
 
   return (
     <DragDropContext onDragEnd={DragEnd}>
       <Droppable droppableId="movies">
         {(provided) => (
           <List className="movies" {...provided.droppableProps} ref={provided.innerRef}>
-            {movies.map(({id, name}, index) => {
+            {renderInfo.map((movieOption, index) => {
               return (
-                <Draggable key={id} draggableId={id} index={index}>
+                <Draggable key={movieOption.id} draggableId={movieOption.id} index={index}>
                   {(provided) => (
                     <ListItem  
                       ref= {provided.innerRef} 
                       {...provided.draggableProps} 
                       >
-                      <ListItemText primary={ name } />
+                      <ListItemText primary={ movieOption.info.name } />
                       <IconButton edge="end" {...provided.dragHandleProps}>
                           <DragHandleIcon />
                       </IconButton>

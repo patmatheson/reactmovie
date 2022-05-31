@@ -17,10 +17,13 @@ import { getDatabase, ref, set } from "firebase/database";
 import { app } from "../firebase";
 import { useList } from 'react-firebase-hooks/database';
 
+interface GenrePanelProps {
+  googleUserID: string;
+}
 
 
 
-export default function GenrePanel() {
+export default function GenrePanel(props: GenrePanelProps) {
   const db = getDatabase(app);
 
   const [open, setOpen] = React.useState(false);
