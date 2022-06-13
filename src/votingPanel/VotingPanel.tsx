@@ -1,5 +1,5 @@
 import Stack from '@mui/material/Stack';
-import { Typography } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import VotingList from './VotingList';
 import GoogleLogin from '../login';
 
@@ -25,6 +25,7 @@ export default function VotingPanel(props: VotingPanelProps) {
         Movie Voting
       </Typography>
       <VotingList googleUserID={props.googleUserID}/>
+      <Button variant="contained" onClick={() => {/*TODO*/}} >Vote</Button>
     </Stack>
   );
 }
