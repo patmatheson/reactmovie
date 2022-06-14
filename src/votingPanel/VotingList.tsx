@@ -8,12 +8,13 @@ import { app } from "../firebase";
 import { useList, useListVals, useObjectVal } from 'react-firebase-hooks/database';
 
 import { MovieOption } from '../moviePanel/MoviePanel'
+import getMovieName, { getMovieInfo } from '../movieName';
 
 interface VotingListProps{
   googleUserID: string;
 }
 
-interface MovieRank {
+export interface MovieRank {
   movieUuid: string;
   rank: number;
 }
@@ -68,10 +69,10 @@ export default function VotingList(props: VotingListProps) {
     }
 
     for  (const vote of localVotes){
-      const movieMatches = movies?.filter(m => m.id == vote.movieUuid);
-      if (movieMatches.length>0)
+      const movieName = getMovieInfo(vote.movieUuid);
+      if (movieName)
       {
-        renderInfo.push(movieMatches[0]);
+        renderInfo.push(movieName);
       }
     }
   }

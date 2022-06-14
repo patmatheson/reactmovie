@@ -1,4 +1,4 @@
-import { Borda } from 'votes'
+import { Ballot, Borda } from 'votes'
 
 interface iVotes {
     candidates: string[],
@@ -7,13 +7,15 @@ interface iVotes {
     ];
 }
 
-export default function VoteTally (votes: iVotes){
+export default function VoteTally (candidates: string[], ballots: Ballot[]){
     const tally = new  Borda({
-        candidates: votes.candidates,
-        ballots: votes.ballots
+        candidates: candidates,
+        ballots: ballots
     })
 
-    console.log(`Tally Complete, Results: ${tally.scores}`);
+    const scores = tally.scores();
+    console.log(scores);
+
 
     return tally.ranking();
 }
