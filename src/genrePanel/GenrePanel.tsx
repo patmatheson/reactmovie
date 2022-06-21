@@ -47,24 +47,28 @@ export default function GenrePanel(props: GenrePanelProps) {
 
   return (
     
-    <Stack spacing={2} > 
+    <Stack spacing={0} > 
       <Typography textAlign="center" variant="h5" component="div">
         Genre Selection
       </Typography>
+
       <Stack  direction="row" justifyContent = "space-between" spacing={2}>
         <Tooltip title={weeklyGenre}>
             <Chip sx={{ maxWidth: "73%", typography: 'h6' }} label={weeklyGenre} variant="outlined" />
         </Tooltip>
         <Button variant="outlined" >Veto</Button>
       </Stack>
+
         {loading && <span>List: Loading...</span>}
         {!loading && genreSnapshots && (
           <GenreList genres={genreSnapshots.map(v => v.val())} />
         )}
+
       <Stack direction="row" justifyContent = "space-between" spacing={2}>
         <Button variant="contained" onClick={selectRandomGenre} disabled={loading}>Choose Random</Button>
         <Button variant="outlined" onClick={handleOpen}>Update List</Button>
       </Stack>
+
       <Modal
         open={open}
         onClose={handleClose}
@@ -76,20 +80,8 @@ export default function GenrePanel(props: GenrePanelProps) {
             <UpdateGenres submit={updateGenres} inputGenres={genreSnapshots.map(v => v.val())} />
           )}
         </Box>
-        {/* <Box sx={modalStyle}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Text in a modal
-          </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-          </Typography>
-        </Box> */}
       </Modal>
+
     </Stack>
-    // todo The "current selected one"
-    // Veto button
-    
-    // select random at bottom
-    
   );
 }

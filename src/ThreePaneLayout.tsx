@@ -14,7 +14,7 @@ interface ThreePanelLayoutProps {
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
   ...theme.typography.body2,
-  padding: theme.spacing(2),
+  padding: theme.spacing(1),
   textAlign: 'center',
   color: theme.palette.text.secondary,
 }));
@@ -22,7 +22,7 @@ const Item = styled(Paper)(({ theme }) => ({
 export default function ThreePaneLayout(props: ThreePanelLayoutProps) {
   return (
    
-      <Grid container spacing={2} columns={12}>
+      <Grid container spacing={0} columns={12}>
         <Grid item xs={12} md={4}>
             <Item>
                 <GenrePanel googleUserID={props.googleUserID} />
