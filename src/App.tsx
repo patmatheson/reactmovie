@@ -11,20 +11,9 @@ import MainHeader from './MainHeader';
 function App() {
 
   const auth = getAuth();
-  const [userId, setUserID] = React.useState(() => {
-    const cookieSplit = document.cookie.split('; ');
-    const cookieFind = cookieSplit.find(row => row.startsWith('googleUID='));
-    if (cookieFind){
-      return cookieFind.split('=')[1];
-    }
-    else {
-      return "";
-    }
-  });
-
-
-  
-  if (userId== "" || !auth.currentUser){
+  const [userId, setUserID] = React.useState("");
+ 
+  if (!auth.currentUser){
     return (
       <div className="App">
         <GoogleLogin setUserId={setUserID} />
@@ -32,6 +21,9 @@ function App() {
     );
   }
    
+  if (userId == "" && auth.currentUser){
+    setUserID(auth.currentUser.uid)
+  }
   
   return (
     <Stack spacing={0}>
@@ -44,5 +36,4 @@ function App() {
     </Stack>
   );
 }
-//trigger re-render  - change a prop or stat in App(), done by sending function to ThreePanel or Login;
 export default App;

@@ -1,14 +1,18 @@
 import { IconButton, List, ListItem } from '@mui/material';
-import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import DragHandleIcon from '@mui/icons-material/DragHandle';
 import ListItemText from '@mui/material/ListItemText';
-import react, { useState } from 'react';
-import { getDatabase, ref, remove, set, get } from "firebase/database";
+
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import React from 'react';
+
 import { app } from "../firebase";
+import { getDatabase, ref, remove, set, get } from "firebase/database";
 import { useList, useListVals, useObjectVal } from 'react-firebase-hooks/database';
 
 import { MovieOption } from '../moviePanel/MoviePanel'
 import getMovieName, { getMovieInfo } from '../movieName';
+
+
 
 interface VotingListProps{
   googleUserID: string;
@@ -20,16 +24,16 @@ export interface MovieRank {
 }
 
 export default function VotingList(props: VotingListProps) {
-
   const db = getDatabase(app);
-
   const votingRef = ref(db, `votes/${props.googleUserID}`);
   const movieRef = ref(db, 'movies');
   const [votingSnapshot, votingloading, votingerror] = useObjectVal<MovieRank[]>(votingRef);
   const [movies, moviesloading, movieserror] = useListVals<MovieOption>(movieRef);
   
+  
   const renderInfo: MovieOption[] = [];
   let localVotes: MovieRank[] = [];
+
   if (votingSnapshot){
     for (const vote of votingSnapshot){
       localVotes.push(vote);
@@ -76,6 +80,8 @@ export default function VotingList(props: VotingListProps) {
       }
     }
   }
+
+
 
   const DragEnd = (result: any) =>{
     console.log (result);
