@@ -22,7 +22,7 @@ export default function VotingPanel(props: VotingPanelProps) {
   const lockedInfo = {locked : true};
 
   const [voteLocked, setVoteLocked] = useState(false);
-  const [voteButtonText, setVoteButtonText] = useState("Vote");
+  const [voteButtonText, setVoteButtonText] = useState("Vote (Lock In)");
   const lockedDBRef = ref(db, `locked/${currentUserId}`);
 
   let localLock: string[] = [];
@@ -35,7 +35,7 @@ export default function VotingPanel(props: VotingPanelProps) {
 
   function unlockVote () {
     setVoteLocked(false);
-    setVoteButtonText("Vote");
+    setVoteButtonText("Vote (Lock In)");
     remove(lockedDBRef);
   }
 

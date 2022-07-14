@@ -1,8 +1,14 @@
 import { SystemUpdateTwoTone } from "@mui/icons-material";
-import { Avatar, Box, Container, Grid, IconButton, Menu, MenuItem, Stack, Typography } from "@mui/material";
+import { Avatar, Box, Container, Grid, IconButton, Menu, MenuItem, Modal, Stack, Typography } from "@mui/material";
 import React from "react";
 import ThreePaneLayout from "./ThreePaneLayout";
 import { signOut, getAuth, Auth, User } from "firebase/auth";
+import { useList } from "react-firebase-hooks/database";
+import { getDatabase, ref } from "firebase/database";
+import { app } from "./firebase";
+import VoteResults from "./VoteResults";
+import { voteSubmit } from "./votingPanel/voteSubmit";
+
 
 export interface MainHeaderProps{
     setUserId: (userId: string) => void;
@@ -11,8 +17,24 @@ export interface MainHeaderProps{
 
 
 export default function MainHeader(props: MainHeaderProps) {
+    
     const auth = getAuth() as Auth;
     const googleUser = auth.currentUser as User;
+
+    const [closeVoteDialog, setCloseVoteDialog] = React.useState(false);
+    const voteOpen = () => setCloseVoteDialog(true);
+    const voteClose = () => setCloseVoteDialog(false);
+
+    const votingClose = () =>{
+        voteOpen();
+        voteSubmit();
+    }
+
+    const db = getDatabase(app);
+    const lockedRef = ref(db, `locked`);
+    const [lockedUsersSnap, loadingLocked, errorLocked] = useList(lockedRef);
+    const usersRef = ref(db, `users`);
+    const [allUsersSnap, loadingUsers, errorUsers] = useList(usersRef);
 
     const userName = googleUser.displayName || undefined;
     const profilePic = googleUser.photoURL || undefined;
@@ -73,8 +95,13 @@ export default function MainHeader(props: MainHeaderProps) {
                         Logout
                     </MenuItem>
                     <MenuItem
-                        disabled={!isAdmin}>
-                        Complete Vote (Admin)   
+                        disabled={!isAdmin}
+                        onClick={voteSubmit}>
+                        Complete Vote 
+                        {(loadingLocked || loadingUsers) && "Loading"}
+                        {!(loadingLocked || loadingUsers) && 
+                        (lockedUsersSnap && allUsersSnap)  && 
+                        (" " + lockedUsersSnap.length + "/" + allUsersSnap.length)}
                     </MenuItem>
                     <MenuItem
                         disabled={!isAdmin}>
@@ -83,6 +110,15 @@ export default function MainHeader(props: MainHeaderProps) {
 
                 </Menu>
             </Box>
+            <Modal
+                open={closeVoteDialog}
+                onClose={voteClose}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description">
+                <Box>
+                    
+                </Box>
+             </Modal>
         </Grid>
     </Grid>
   );
